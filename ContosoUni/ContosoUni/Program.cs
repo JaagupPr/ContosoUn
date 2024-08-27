@@ -16,8 +16,9 @@ namespace ContosoUni
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
             var app = builder.Build();
+
+            CreateDbIfNotExists(app);
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -39,6 +40,26 @@ namespace ContosoUni
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+
+            static void CreateDbIfNotExists(IHost host)
+            {
+                using (var scope = host.Services.CreateScope())
+                { 
+                    var services = scope.ServiceProvider;
+                    try
+                    {
+                        var context = services.GetRequiredService<SchoolContext>();
+                        DbInitializer.Initialize(context);
+                    }
+                    catch (Exception ex)
+                    {
+                        {
+                            var logger = services.GetRequiredService<ILogger<Program>>();
+                            logger.LogError(ex, "An error ocurred creating the DB.");
+                        }   
+                        }
+                    }
+                }
+            }
         }
     }
-}
