@@ -9,6 +9,9 @@ namespace ContosoUni
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
+
             builder.Services.AddDbContext<SchoolContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -40,8 +43,8 @@ namespace ContosoUni
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
-
-            static void CreateDbIfNotExists(IHost host)
+             }
+           public static void CreateDbIfNotExists(IHost host)
             {
                 using (var scope = host.Services.CreateScope())
                 { 
@@ -62,4 +65,4 @@ namespace ContosoUni
                 }
             }
         }
-    }
+}
